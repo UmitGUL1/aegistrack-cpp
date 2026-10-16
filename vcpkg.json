@@ -1,0 +1,23 @@
+{
+  "name": "aegistrack",
+  "version-string": "1.0.0",
+  "description": "Multi-Sensor Fusion & Real-Time Object Tracking System in Modern C++20",
+  "homepage": "https://github.com/aegistrack/aegistrack",
+  "license": "MIT",
+  "dependencies": [
+    "eigen3",
+    "nlohmann-json",
+    "spdlog",
+    "gtest",
+    "benchmark"
+  ],
+  "features": {
+    "gui": {
+      "description": "Build the Qt 6 Quick / QML engineering desktop workstation",
+      "dependencies": [
+        "qtbase",
+        "qtdeclarative"
+      ]
+    }
+  }
+}

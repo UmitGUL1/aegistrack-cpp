@@ -1,0 +1,7 @@
+# Implementation and verification status
+
+AegisTrack contains a C++20 headless simulation/tracking library, a CLI, an optional Qt 6 desktop UI, GoogleTest tests, Google Benchmark cases, JSON scenarios, and GitHub Actions workflows. The core includes radar/GNSS models, KF/EKF estimation, nearest-neighbor/Hungarian association, track lifecycle management, recording, and replay.
+
+The source has received fixes for capture-time sensor sampling, capture-time raw measurement error, revisit interval validation, and strict chronological sorting. Regression tests were added for those behaviors. These changes have not been compiled or executed in the current environment: CMake and a C++ compiler are unavailable on the Windows PATH, and WSL returned `E_ACCESSDENIED`. Prior build directories and test logs are historical evidence for an earlier revision, not verification of these changes.
+
+Before calling this revision verified, run the headless build and CTest, sanitizer preset, Qt build and offscreen screenshot flow, representative CLI scenarios, and 1/10/50/100-object benchmarks in GitHub Actions. Check its workflow results for the exact commit. Do not reuse historical benchmark or accuracy figures for this revision.
