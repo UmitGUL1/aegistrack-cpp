@@ -1,0 +1,90 @@
+{
+  "name": "Scenario J: Dynamic Maneuvers",
+  "description": "Objects execute scheduled coordinated turns and linear accelerations to evaluate CV filter model mismatch and process noise adaptation.",
+  "duration_sec": 35.0,
+  "dt_sec": 0.1,
+  "seed": 1010,
+  "objects": [
+    {
+      "id": 1,
+      "label": "Maneuver-CT",
+      "px": -600.0,
+      "py": -300.0,
+      "vx": 35.0,
+      "vy": 0.0,
+      "motion_model": "ConstantVelocity",
+      "spawn_time": 0.0,
+      "has_gnss_telemetry": true,
+      "maneuvers": [
+        {
+          "start_time": 8.0,
+          "end_time": 18.0,
+          "motion_model": "CoordinatedTurn",
+          "turn_rate_rad_s": 0.09
+        },
+        {
+          "start_time": 22.0,
+          "end_time": 30.0,
+          "motion_model": "CoordinatedTurn",
+          "turn_rate_rad_s": -0.07
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "label": "Maneuver-CA",
+      "px": -500.0,
+      "py": 450.0,
+      "vx": 22.0,
+      "vy": -5.0,
+      "motion_model": "ConstantVelocity",
+      "spawn_time": 0.0,
+      "has_gnss_telemetry": true,
+      "maneuvers": [
+        {
+          "start_time": 6.0,
+          "end_time": 14.0,
+          "motion_model": "ConstantAcceleration",
+          "ax": 2.5,
+          "ay": -1.8
+        },
+        {
+          "start_time": 18.0,
+          "end_time": 26.0,
+          "motion_model": "ConstantAcceleration",
+          "ax": -2.0,
+          "ay": 2.2
+        }
+      ]
+    }
+  ],
+  "radars": [
+    {
+      "id": "radar_agile",
+      "x": 0.0,
+      "y": 0.0,
+      "min_range_m": 10.0,
+      "max_range_m": 4500.0,
+      "sampling_frequency_hz": 4.0,
+      "range_noise_std_m": 5.5,
+      "bearing_noise_std_rad": 0.01,
+      "detection_probability": 0.97,
+      "mean_false_alarms_per_scan": 0.08
+    }
+  ],
+  "gnss_sensors": [
+    {
+      "id": "gnss_agile",
+      "sampling_frequency_hz": 2.0,
+      "position_noise_std_x_m": 4.0,
+      "position_noise_std_y_m": 4.0,
+      "packet_loss_probability": 0.02
+    }
+  ],
+  "tracker": {
+    "confirmation_hits": 3,
+    "gate_threshold_2d": 13.8155,
+    "process_noise_accel_std": 3.5,
+    "association_algorithm": "Hungarian"
+  }
+}

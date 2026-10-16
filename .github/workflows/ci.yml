@@ -1,0 +1,98 @@
+name: AegisTrack CI
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master, develop ]
+
+jobs:
+  headless-build-and-test:
+    name: Headless Core, CLI, Tests & Benchmarks (GCC 13)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install C++20 & Math Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            cmake ninja-build g++-13 \
+            libeigen3-dev libspdlog-dev nlohmann-json3-dev \
+            libgtest-dev libgmock-dev libbenchmark-dev
+
+      - name: Configure Headless Release Preset
+        run: cmake --preset headless
+
+      - name: Build Core, CLI, Tests & Benchmarks
+        run: cmake --build --preset headless -j
+
+      - name: Run Unit & Integration Tests (CTest)
+        run: ctest --preset headless --output-on-failure
+
+      - name: Verify Headless CLI Fusion Comparison
+        run: ./build/headless/aegistrack-cli --scenario scenarios/fusion-comparison.json --fusion-comparison
+
+      - name: Run Google Benchmark Smoke Check
+        run: ./build/headless/aegistrack_benchmarks --benchmark_min_time=0.02s
+
+  sanitizers:
+    name: AddressSanitizer & UndefinedBehaviorSanitizer
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            cmake ninja-build g++-13 \
+            libeigen3-dev libspdlog-dev nlohmann-json3-dev \
+            libgtest-dev libgmock-dev
+
+      - name: Configure Sanitizers Preset (ASan + UBSan)
+        run: cmake --preset sanitizers
+
+      - name: Build Sanitized Test Suite
+        run: cmake --build --preset sanitizers -j
+
+      - name: Run Tests Under ASan & UBSan
+        env:
+          ASAN_OPTIONS: "detect_leaks=1:halt_on_error=1"
+          UBSAN_OPTIONS: "print_stacktrace=1:halt_on_error=1"
+        run: ctest --preset sanitizers --output-on-failure
+
+  desktop-qt6-build:
+    name: Qt 6 Desktop Workstation Build & Offscreen Render Check
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Qt 6 & C++20 Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            cmake ninja-build g++-13 \
+            libeigen3-dev libspdlog-dev nlohmann-json3-dev \
+            libgtest-dev libgmock-dev libbenchmark-dev \
+            qt6-base-dev qt6-declarative-dev \
+            qml6-module-qtquick qml6-module-qtquick-controls \
+            qml6-module-qtquick-templates \
+            qml6-module-qtquick-layouts qml6-module-qtquick-window \
+            qml6-module-qtqml-workerscript
+
+      - name: Configure Default Preset (with Qt 6 GUI)
+        run: cmake --preset default
+
+      - name: Build All Targets Including aegistrack-desktop
+        run: cmake --build --preset default -j
+
+      - name: Verify Offscreen Desktop Screenshot Generation
+        env:
+          QT_QPA_PLATFORM: offscreen
+        run: |
+          ./build/default/aegistrack-desktop --capture-screenshots /tmp/aegistrack_ci_screens
+          test -s /tmp/aegistrack_ci_screens/dashboard_overview.png
+          test -s /tmp/aegistrack_ci_screens/live_tracking.png
+          test -s /tmp/aegistrack_ci_screens/analytics_comparison.png
+          test -s /tmp/aegistrack_ci_screens/sensors_view.png

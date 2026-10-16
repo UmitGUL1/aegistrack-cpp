@@ -1,0 +1,49 @@
+{
+  "name": "Scenario F: Occlusion & Coasting Recovery",
+  "description": "Objects traverse a circular occlusion shadow centered at (150, 150) with radius 220m where all sensor observations are blocked, testing coasting prediction and re-acquisition.",
+  "duration_sec": 35.0,
+  "dt_sec": 0.1,
+  "seed": 606,
+  "objects": [
+    { "id": 1, "label": "Occluded-A", "px": -450.0, "py": -450.0, "vx": 30.0, "vy": 30.0, "motion_model": "ConstantVelocity", "spawn_time": 0.0, "has_gnss_telemetry": true },
+    { "id": 2, "label": "Occluded-B", "px": -450.0, "py": 150.0,  "vx": 32.0, "vy": 0.0,  "motion_model": "ConstantVelocity", "spawn_time": 0.0, "has_gnss_telemetry": true }
+  ],
+  "radars": [
+    {
+      "id": "radar_site",
+      "x": 0.0,
+      "y": -600.0,
+      "min_range_m": 10.0,
+      "max_range_m": 4500.0,
+      "sampling_frequency_hz": 4.0,
+      "range_noise_std_m": 5.0,
+      "bearing_noise_std_rad": 0.01,
+      "detection_probability": 0.98,
+      "mean_false_alarms_per_scan": 0.05,
+      "occlusion_zones": [
+        { "center_x": 150.0, "center_y": 150.0, "radius_m": 220.0 }
+      ]
+    }
+  ],
+  "gnss_sensors": [
+    {
+      "id": "gnss_telemetry",
+      "sampling_frequency_hz": 2.0,
+      "position_noise_std_x_m": 4.0,
+      "position_noise_std_y_m": 4.0,
+      "packet_loss_probability": 0.02,
+      "occlusion_zones": [
+        { "center_x": 150.0, "center_y": 150.0, "radius_m": 220.0 }
+      ]
+    }
+  ],
+  "tracker": {
+    "confirmation_hits": 3,
+    "coasting_threshold_sec": 1.2,
+    "max_time_without_observation_sec": 16.0,
+    "max_missed_updates": 30,
+    "gate_threshold_2d": 13.8155,
+    "process_noise_accel_std": 1.2,
+    "association_algorithm": "Hungarian"
+  }
+}
