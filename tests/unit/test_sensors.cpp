@@ -119,6 +119,7 @@ TEST(SensorTest, DetectionProbabilityBoundariesAndSensorShutdown) {
     cfg.detection_probability = 1.0;
     cfg.outage_windows.push_back(OutageWindow{5.0, 10.0});
     RadarSensor radar_outage(cfg);
+    objects.front().step(2.0, 2.0);
     EXPECT_EQ(radar_outage.generateMeasurements(2.0, objects, rng, next_id).size(), 1U);
     EXPECT_TRUE(radar_outage.generateMeasurements(7.0, objects, rng, next_id).empty());
 
@@ -190,8 +191,9 @@ TEST(SensorTest, CatchUpSamplesUsePositionAtCaptureTime) {
     const auto samples = scheduler.sampleAndReleaseReady(1.0, objects, rng);
     ASSERT_EQ(samples.size(), 4U);
     for (std::size_t i = 0; i < samples.size(); ++i) {
-        EXPECT_NEAR(samples[i].capture_timestamp, (i + 1) * 0.25, 1e-9);
-        EXPECT_NEAR(samples[i].z(0), (i + 1) * 2.5, 1e-9);
+        const double sample_number = static_cast<double>(i + 1);
+        EXPECT_NEAR(samples[i].capture_timestamp, sample_number * 0.25, 1e-9);
+        EXPECT_NEAR(samples[i].z(0), sample_number * 2.5, 1e-9);
     }
 }
 
