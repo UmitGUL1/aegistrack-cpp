@@ -1,4 +1,4 @@
-# AegisTrack — Multi-Sensor Fusion & Real-Time Object Tracking System
+# AegisTrack - Multi-Sensor Fusion & Real-Time Object Tracking System
 
 [![C++20](https://img.shields.io/badge/C%2B%2B-20-00599C?logo=c%2B%2B&logoColor=white)](CMakeLists.txt)
 [![Build: CMake + Ninja](https://img.shields.io/badge/Build-CMake%203.24%2B-064F8C?logo=cmake)](CMakePresets.json)
@@ -40,16 +40,16 @@ The core simulation, sensor modeling, state estimation, data association, and tr
 flowchart LR
     subgraph Sim["Physical World & Sensor Simulation (aegistrack_core)"]
         GT["SimulatedObject\n(CV / CA / CT Motion)"]
-        RAD["RadarSensor\nPolar [r, θ]ᵀ + Clutter + FOV"]
-        GNSS["GnssSensor\nCartesian [px, py]ᵀ + Drift"]
+        RAD["RadarSensor\nPolar [r, ?]? + Clutter + FOV"]
+        GNSS["GnssSensor\nCartesian [px, py]? + Drift"]
         SCHED["SensorScheduler\n(DropStale / ReorderBuffer)"]
         GT --> RAD & GNSS --> SCHED
     end
 
     subgraph Fusion["Multi-Sensor Fusion Engine (aegistrack_core)"]
         TM["TrackManager\n(Tentative / Confirmed / Coasting)"]
-        GATE["Mahalanobis χ² Gating\nd² = νᵀ S⁻¹ ν"]
-        ASSOC["IDataAssociator\n(Hungarian O(N³) / Nearest Neighbor)"]
+        GATE["Mahalanobis ?� Gating\nd� = ?? S?� ?"]
+        ASSOC["IDataAssociator\n(Hungarian O(N�) / Nearest Neighbor)"]
         EST["KalmanFilter (GNSS) &\nExtendedKalmanFilter (Radar)"]
         SCHED --> TM
         TM --> GATE --> ASSOC --> EST --> TM
@@ -103,7 +103,7 @@ cmake --preset headless
 cmake --build --preset headless
 ctest --preset headless --output-on-failure
 ./build/headless/aegistrack_benchmarks --benchmark_min_time=0.05s
-./build/headless/aegistrack-cli --scenario scenarios/fusion-comparison.json --compare-fusion
+./build/headless/aegistrack-cli --scenario scenarios/fusion-comparison.json --fusion-comparison
 ```
 
 Timing and RMSE values depend on the machine, scenario, and code revision. Previously recorded values were removed after changing capture-time sampling and error evaluation; fresh results should accompany a tagged release with the exact commit, toolchain, and command.
@@ -146,7 +146,7 @@ cmake --build --preset headless -j
 # Run a scenario with matched Radar-only vs GNSS-only vs Fused comparison and export CSV/JSON
 ./build/headless/aegistrack-cli \
   --scenario scenarios/fusion-comparison.json \
-  --compare-fusion \
+  --fusion-comparison \
   --export exports/fusion_run
 
 # Deterministically replay a recorded session with Nearest-Neighbor vs Hungarian association
@@ -181,10 +181,10 @@ ctest --preset sanitizers --output-on-failure
 | [`basic.json`](scenarios/basic.json) | **Scenario A** | Single-aircraft constant-velocity baseline verification |
 | [`multiple_objects.json`](scenarios/multiple_objects.json) | **Scenario B** | 20 independent targets with staggered spawns and velocities |
 | [`crossing.json`](scenarios/crossing.json) | **Scenario C** | 4 symmetric intersecting trajectories testing velocity-state gating |
-| [`noisy_measurements.json`](scenarios/noisy_measurements.json) | **Scenario D** | High-variance radar & GNSS noise (`σ_r=22m, σ_gnss=28m`) filter smoothing |
+| [`noisy_measurements.json`](scenarios/noisy_measurements.json) | **Scenario D** | High-variance radar & GNSS noise (`?_r=22m, ?_gnss=28m`) filter smoothing |
 | [`sensor_failure.json`](scenarios/sensor_failure.json) | **Scenario E** | Scheduled radar (`12-20s`) and GNSS (`24-30s`) outages & failover |
 | [`occlusion.json`](scenarios/occlusion.json) | **Scenario F** | Circular radar shadow zone (`r=190m`) testing track coasting & recovery |
-| [`dense_environment.json`](scenarios/dense_environment.json) | **Scenario G** | 25 closely spaced targets with elevated Poisson clutter (`λ=2.0/scan`) |
+| [`dense_environment.json`](scenarios/dense_environment.json) | **Scenario G** | 25 closely spaced targets with elevated Poisson clutter (`?=2.0/scan`) |
 | [`stress.json`](scenarios/stress.json) | **Scenario H** | 80 simultaneous targets tracked by dual radar stations + GNSS |
 | [`fusion-comparison.json`](scenarios/fusion-comparison.json) | **Scenario I** | Matched ground-truth Radar-Only vs. GNSS-Only vs. Fused evaluation |
 | [`dynamic_maneuvers.json`](scenarios/dynamic_maneuvers.json) | **Scenario J** | Piecewise scheduled `CV` $\rightarrow$ `CoordinatedTurn` $\rightarrow$ `CA` maneuvers |

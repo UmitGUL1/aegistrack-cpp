@@ -9,7 +9,7 @@ cmake --preset headless
 cmake --build --preset headless
 ctest --preset headless --output-on-failure
 ./build/headless/aegistrack_benchmarks --benchmark_min_time=0.05s
-./build/headless/aegistrack-cli --scenario scenarios/fusion-comparison.json --compare-fusion
+./build/headless/aegistrack-cli --scenario scenarios/fusion-comparison.json --fusion-comparison
 ```
 
 Capture the commit SHA, CPU, compiler, build type, complete benchmark output, and scenario seed with any published measurement. Historical values from before the capture-time sampling and RMSE corrections do not describe this revision. The core tracking engine and Qt rendering have separate scheduling and locking behavior; benchmark timings for the headless engine do not establish GUI responsiveness or a real-time deadline guarantee.

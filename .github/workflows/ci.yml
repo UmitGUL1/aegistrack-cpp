@@ -31,7 +31,7 @@ jobs:
         run: ctest --preset headless --output-on-failure
 
       - name: Verify Headless CLI Fusion Comparison
-        run: ./build/headless/aegistrack-cli --scenario scenarios/fusion-comparison.json --compare-fusion
+        run: ./build/headless/aegistrack-cli --scenario scenarios/fusion-comparison.json --fusion-comparison
 
       - name: Run Google Benchmark Smoke Check
         run: ./build/headless/aegistrack_benchmarks --benchmark_min_time=0.02s
