@@ -161,7 +161,7 @@ cmake --build --preset headless -j
   --associator Hungarian
 ```
 
-### 3. Run Automated Unit & Integration Tests (30 Tests)
+### 3. Run Automated Unit & Integration Tests
 ```bash
 ctest --preset default --output-on-failure
 ```
@@ -206,6 +206,7 @@ ctest --preset sanitizers --output-on-failure
 - [**Performance Benchmarks & Optimization Report**](docs/performance.md)
 - [**Architectural Design Decisions & Tradeoffs**](docs/design-decisions.md)
 - [**Dependency Versions & Reproducible Build Route**](docs/dependencies.md)
+- [**Repository Health Follow-up & Verified CI Results**](docs/repository-health.md)
 - [**Implementation Status**](IMPLEMENTATION_STATUS.md) & [**Future Roadmap**](ROADMAP.md)
 
 ## Contributing
