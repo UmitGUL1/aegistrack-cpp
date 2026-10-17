@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [ main, master, develop ]
 
+permissions:
+  contents: read
+
 jobs:
   headless-build-and-test:
     name: Headless Core, CLI, Tests & Benchmarks (GCC 13)
@@ -96,3 +99,4 @@ jobs:
           test -s /tmp/aegistrack_ci_screens/live_tracking.png
           test -s /tmp/aegistrack_ci_screens/analytics_comparison.png
           test -s /tmp/aegistrack_ci_screens/sensors_view.png
+
