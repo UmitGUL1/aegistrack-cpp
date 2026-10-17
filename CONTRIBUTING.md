@@ -26,4 +26,3 @@ For GUI changes, also use the `default` preset with Qt 6 installed. See [README.
 ## Dependencies
 
 The optional vcpkg manifest uses a `builtin-baseline` to select a repeatable dependency graph. Update the baseline deliberately, check the minimum versions in `vcpkg.json`, and run the headless and GUI CI paths before merging a dependency refresh.
-
