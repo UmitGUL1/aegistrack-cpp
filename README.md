@@ -117,6 +117,12 @@ Timing and RMSE values depend on the machine, scenario, and code revision. Previ
 - **Core Dependencies**: `Eigen3`, `spdlog`, `nlohmann_json`, `GTest`, `benchmark`
 - **Desktop GUI Dependencies** *(optional for headless builds)*: `Qt6` (`Core`, `Gui`, `Quick`, `Qml`, `QuickControls2`)
 
+For pinned core dependencies, use the complete
+[vcpkg setup and version update guide](docs/dependencies.md). The
+`vcpkg-release` configure/build/test presets are headless and reject a
+FetchContent fallback; `vcpkg-desktop` explicitly selects the manifest GUI
+feature. The standard presets below also support system packages.
+
 On Ubuntu 24.04 / WSL2:
 ```bash
 sudo apt-get update && sudo apt-get install -y \
@@ -199,4 +205,10 @@ ctest --preset sanitizers --output-on-failure
 - [**Testing Strategy & Verification Matrix**](docs/testing.md)
 - [**Performance Benchmarks & Optimization Report**](docs/performance.md)
 - [**Architectural Design Decisions & Tradeoffs**](docs/design-decisions.md)
+- [**Dependency Versions & Reproducible Build Route**](docs/dependencies.md)
 - [**Implementation Status**](IMPLEMENTATION_STATUS.md) & [**Future Roadmap**](ROADMAP.md)
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the pull request workflow, C++ style,
+regression testing expectations, architectural boundaries and dependency updates.

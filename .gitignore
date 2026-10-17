@@ -4,6 +4,8 @@ build-*/
 out/
 cmake-build-*/
 _deps/
+.tools/
+vcpkg_installed/
 
 # Compiled binaries and libraries
 *.exe

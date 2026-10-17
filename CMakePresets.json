@@ -1,5 +1,5 @@
 {
-  "version": 6,
+  "version": 5,
   "cmakeMinimumRequired": {
     "major": 3,
     "minor": 24,
@@ -62,13 +62,28 @@
     },
     {
       "name": "vcpkg-release",
-      "displayName": "vcpkg Release Build",
-      "description": "Release build using vcpkg toolchain via VCPKG_ROOT",
-      "inherits": "default",
-      "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+      "displayName": "Pinned vcpkg Headless Release",
+      "description": "Headless manifest build with no FetchContent fallback",
+      "inherits": "headless",
+      "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+      "cacheVariables": {
+        "AEGISTRACK_FETCH_MISSING_DEPENDENCIES": "OFF"
+      }
+    },
+    {
+      "name": "vcpkg-desktop",
+      "displayName": "Pinned vcpkg Desktop Release",
+      "description": "Opt into manifest GUI dependencies; Qt build can be lengthy",
+      "inherits": "vcpkg-release",
+      "cacheVariables": {
+        "AEGISTRACK_BUILD_GUI": "ON",
+        "VCPKG_MANIFEST_FEATURES": "gui"
+      }
     }
   ],
   "buildPresets": [
+    { "name": "vcpkg-release", "configurePreset": "vcpkg-release" },
+    { "name": "vcpkg-desktop", "configurePreset": "vcpkg-desktop" },
     {
       "name": "default",
       "configurePreset": "default"
@@ -87,6 +102,8 @@
     }
   ],
   "testPresets": [
+    { "name": "vcpkg-release", "configurePreset": "vcpkg-release", "output": { "outputOnFailure": true } },
+    { "name": "vcpkg-desktop", "configurePreset": "vcpkg-desktop", "output": { "outputOnFailure": true } },
     {
       "name": "default",
       "configurePreset": "default",

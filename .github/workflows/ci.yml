@@ -5,13 +5,62 @@ on:
     branches: [ main, master, develop ]
   pull_request:
     branches: [ main, master, develop ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: aegistrack-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
+  pinned-vcpkg:
+    name: Pinned vcpkg Core, CLI, Tests & Benchmarks
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      CC: gcc-13
+      CXX: g++-13
+      VCPKG_DISABLE_METRICS: '1'
+      VCPKG_ROOT: ${{ github.workspace }}/.tools/vcpkg
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Checkout the exact manifest registry/tool revision
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          repository: microsoft/vcpkg
+          ref: a34c873a9717a888f58dc05268dea15592c2f0ff # 2024.03.25
+          path: .tools/vcpkg
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Install build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake ninja-build g++-13 curl zip unzip tar pkg-config
+      - name: Bootstrap pinned vcpkg
+        run: ./.tools/vcpkg/bootstrap-vcpkg.sh -disableMetrics
+      - name: Configure without FetchContent fallback
+        run: cmake --preset vcpkg-release
+      - name: Build
+        run: cmake --build --preset vcpkg-release --parallel 2
+      - name: Run manifest dependency tests
+        run: ctest --preset vcpkg-release --output-on-failure --timeout 120
+      - name: Verify CLI and benchmark with selected dependencies
+        run: |
+          ./build/vcpkg-release/aegistrack-cli --scenario scenarios/fusion-comparison.json --fusion-comparison
+          ./build/vcpkg-release/aegistrack_benchmarks --benchmark_min_time=0.02s
+
   headless-build-and-test:
     name: Headless Core, CLI, Tests & Benchmarks (GCC 13)
     runs-on: ubuntu-24.04
+    timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
 
       - name: Install C++20 & Math Dependencies
         run: |
@@ -25,10 +74,10 @@ jobs:
         run: cmake --preset headless
 
       - name: Build Core, CLI, Tests & Benchmarks
-        run: cmake --build --preset headless -j
+        run: cmake --build --preset headless --parallel 2
 
       - name: Run Unit & Integration Tests (CTest)
-        run: ctest --preset headless --output-on-failure
+        run: ctest --preset headless --output-on-failure --timeout 120
 
       - name: Verify Headless CLI Fusion Comparison
         run: ./build/headless/aegistrack-cli --scenario scenarios/fusion-comparison.json --fusion-comparison
@@ -39,8 +88,11 @@ jobs:
   sanitizers:
     name: AddressSanitizer & UndefinedBehaviorSanitizer
     runs-on: ubuntu-24.04
+    timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
 
       - name: Install Dependencies
         run: |
@@ -54,19 +106,22 @@ jobs:
         run: cmake --preset sanitizers
 
       - name: Build Sanitized Test Suite
-        run: cmake --build --preset sanitizers -j
+        run: cmake --build --preset sanitizers --parallel 2
 
       - name: Run Tests Under ASan & UBSan
         env:
           ASAN_OPTIONS: "detect_leaks=1:halt_on_error=1"
           UBSAN_OPTIONS: "print_stacktrace=1:halt_on_error=1"
-        run: ctest --preset sanitizers --output-on-failure
+        run: ctest --preset sanitizers --output-on-failure --timeout 120
 
   desktop-qt6-build:
     name: Qt 6 Desktop Workstation Build & Offscreen Render Check
     runs-on: ubuntu-24.04
+    timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
 
       - name: Install Qt 6 & C++20 Dependencies
         run: |
@@ -85,11 +140,15 @@ jobs:
         run: cmake --preset default
 
       - name: Build All Targets Including aegistrack-desktop
-        run: cmake --build --preset default -j
+        run: cmake --build --preset default --parallel 2
+
+      - name: Run desktop configuration tests
+        run: ctest --preset default --output-on-failure --timeout 120
 
       - name: Verify Offscreen Desktop Screenshot Generation
         env:
           QT_QPA_PLATFORM: offscreen
+          QT_QUICK_BACKEND: software
         run: |
           ./build/default/aegistrack-desktop --capture-screenshots /tmp/aegistrack_ci_screens
           test -s /tmp/aegistrack_ci_screens/dashboard_overview.png

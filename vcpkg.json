@@ -2,14 +2,22 @@
   "name": "aegistrack",
   "version-string": "1.0.0",
   "description": "Multi-Sensor Fusion & Real-Time Object Tracking System in Modern C++20",
-  "homepage": "https://github.com/aegistrack/aegistrack",
+  "homepage": "https://github.com/UmitGUL1/aegistrack-cpp",
   "license": "MIT",
+  "builtin-baseline": "a34c873a9717a888f58dc05268dea15592c2f0ff",
   "dependencies": [
-    "eigen3",
-    "nlohmann-json",
-    "spdlog",
-    "gtest",
-    "benchmark"
+    { "name": "eigen3", "version>=": "3.4.0#4" },
+    { "name": "nlohmann-json", "version>=": "3.11.3" },
+    { "name": "spdlog", "version>=": "1.13.0" },
+    { "name": "gtest", "version>=": "1.14.0" },
+    { "name": "benchmark", "version>=": "1.8.3#2" }
+  ],
+  "overrides": [
+    { "name": "eigen3", "version": "3.4.0", "port-version": 4 },
+    { "name": "nlohmann-json", "version": "3.11.3" },
+    { "name": "spdlog", "version": "1.13.0" },
+    { "name": "gtest", "version": "1.14.0" },
+    { "name": "benchmark", "version": "1.8.3", "port-version": 2 }
   ],
   "features": {
     "gui": {

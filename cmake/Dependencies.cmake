@@ -1,8 +1,15 @@
 include(FetchContent)
 
+function(aegistrack_check_fetch_allowed dependency)
+    if(NOT AEGISTRACK_FETCH_MISSING_DEPENDENCIES)
+        message(FATAL_ERROR "${dependency} was not found. FetchContent fallback is disabled; install dependencies through the selected toolchain.")
+    endif()
+endfunction()
+
 # 1. Eigen3
 find_package(Eigen3 3.4 QUIET NO_MODULE)
 if(NOT Eigen3_FOUND)
+    aegistrack_check_fetch_allowed(Eigen3)
     message(STATUS "Eigen3 not found via find_package; fetching via FetchContent...")
     FetchContent_Declare(
         Eigen3
@@ -19,6 +26,7 @@ endif()
 # 2. nlohmann_json
 find_package(nlohmann_json 3.11 QUIET)
 if(NOT nlohmann_json_FOUND)
+    aegistrack_check_fetch_allowed(nlohmann_json)
     message(STATUS "nlohmann_json not found via find_package; fetching via FetchContent...")
     FetchContent_Declare(
         nlohmann_json
@@ -33,6 +41,7 @@ endif()
 # 3. spdlog
 find_package(spdlog 1.12 QUIET)
 if(NOT spdlog_FOUND)
+    aegistrack_check_fetch_allowed(spdlog)
     message(STATUS "spdlog not found via find_package; fetching via FetchContent...")
     FetchContent_Declare(
         spdlog
@@ -47,6 +56,7 @@ endif()
 if(AEGISTRACK_BUILD_TESTS)
     find_package(GTest QUIET)
     if(NOT GTest_FOUND)
+        aegistrack_check_fetch_allowed(GTest)
         message(STATUS "GTest not found via find_package; fetching via FetchContent...")
         FetchContent_Declare(
             googletest
@@ -63,6 +73,7 @@ endif()
 if(AEGISTRACK_BUILD_BENCHMARKS)
     find_package(benchmark QUIET)
     if(NOT benchmark_FOUND)
+        aegistrack_check_fetch_allowed(benchmark)
         message(STATUS "benchmark not found via find_package; fetching via FetchContent...")
         FetchContent_Declare(
             benchmark

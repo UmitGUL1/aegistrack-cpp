@@ -16,6 +16,7 @@ option(AEGISTRACK_BUILD_GUI "Build the Qt6 Quick / QML desktop workstation" ON)
 option(AEGISTRACK_BUILD_TESTS "Build GoogleTest unit and integration tests" ON)
 option(AEGISTRACK_BUILD_BENCHMARKS "Build Google Benchmark performance suite" ON)
 option(AEGISTRACK_ENABLE_SANITIZERS "Enable AddressSanitizer and UndefinedBehaviorSanitizer" OFF)
+option(AEGISTRACK_FETCH_MISSING_DEPENDENCIES "Allow FetchContent fallback for missing packages" ON)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 include(CompilerWarnings)
